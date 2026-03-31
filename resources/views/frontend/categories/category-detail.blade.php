@@ -233,7 +233,7 @@
             <!-- Pagination -->
             @if($products->hasPages())
                 <div class="mt-8">
-                    {{ $products->links('vendor.pagination.custom') }}
+                    {{ $products->links() }}
                 </div>
             @endif
         @else

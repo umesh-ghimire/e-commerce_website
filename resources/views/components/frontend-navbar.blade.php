@@ -24,7 +24,7 @@
             <div class="relative">
                 <button id="megaMenuToggle" data-dropdown-toggle="megaMenu"
                     class="cursor-pointer relative pb-1 font-medium text-black-700 hover:text-gray-700
-                    after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0
+                    after:2-[''] after:absolute after:left-0 after:bottom-0 after:w-0
                     hover:after:w-full after:h-0.5 after:bg-blue-600 after:transition-all flex items-center space-x-1">
                     <span>Categories</span>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -49,7 +49,7 @@ class Order extends Model
         return $this->hasManyThrough(
             OrderItem::class,
             Product::class,
-            'vendor_id',
+            
             'product_id'
         );
     }

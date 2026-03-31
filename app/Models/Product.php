@@ -15,8 +15,7 @@ class Product extends Model
         'description',
         'price',
         'old_price',
-        'category_id',
-        'vendor_id', 
+        'category_id', 
         'brand',     
         'image',
         'rating',
@@ -42,10 +41,7 @@ class Product extends Model
         'is_active' => 'boolean'
     ];
 
-    public function vendor()
-    {
-        return $this->belongsTo(Vendor::class);
-    }
+    
 
     public function category()
     {

@@ -12,7 +12,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->foreignId('vendor_id')->constrained('vendors')->onDelete('cascade');
             $table->string('product_name');
             $table->decimal('price', 10, 2);
             $table->integer('quantity');
@@ -23,7 +22,7 @@ return new class extends Migration
             $table->json('variation')->nullable();
             $table->timestamps();
             
-            $table->index(['order_id', 'vendor_id']);
+            $table->index(['order_id', 'product_id']);
             $table->index('item_status');
         });
     }

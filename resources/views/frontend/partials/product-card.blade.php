@@ -107,4 +107,9 @@
             @endif
         </div>
     </div>
+    <script>
+function addToCart(productId) {
+    alert("Product " + productId + " added to cart!");
+}
+</script>
 </div>

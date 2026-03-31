@@ -5,6 +5,7 @@ use App\Http\Controllers\FacebookController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CategoryController;
+use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\ProductController; // ← Fixed namespace
 use App\Http\Controllers\ProfileController;
@@ -30,11 +31,28 @@ Route::prefix('products')->group(function () {
 Route::get('/search', [SearchController::class, 'search'])->name('search');
 Route::get('/quick-search', [SearchController::class, 'quickSearch'])->name('quick.search');
 
-// Cart route
-Route::get('/cart', [CartController::class, 'cart'])
-    ->middleware('auth')->name('cart');
-Route::post('/cart/add', [CartController::class, 'addToCart'])
-    ->name('cart.add');
+
+// Cart Routes
+Route::get('/cart', [CartController::class, 'index'])->name('cart');
+Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/update', [CartController::class, 'update'])->name('frontend.cart.update');
+Route::post('/cart/remove', [CartController::class, 'remove'])->name('frontend.cart.remove');
+
+// Checkout Routes
+Route::get('/checkout', [CheckoutController::class, 'index'])
+     ->name('frontend.checkout');
+
+Route::post('/checkout', [CheckoutController::class, 'store'])
+     ->name('frontend.checkout.store');
+
+Route::get('/order/success/{order}', [CheckoutController::class, 'success'])
+     ->name('frontend.order.success'); 
+     
+Route::get('/payment/qr/{order}/{wallet}', [App\Http\Controllers\Frontend\CheckoutController::class, 'showQr'])
+     ->name('frontend.payment.qr');     
+
+Route::post('/payment/proof/{order}', [App\Http\Controllers\Frontend\CheckoutController::class, 'storePaymentProof'])
+     ->name('frontend.payment.proof.store');     
 
 // Dashboard
 Route::get('/dashboard', function () {

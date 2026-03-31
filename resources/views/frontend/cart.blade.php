@@ -1,256 +1,213 @@
-{{-- <!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>Cart Page</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Tailwind CSS via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- font awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        body { background-color: #f3efe5; }
-    </style>
-</head> --}}
 <x-frontend-layout>
-<body class="min-h-screen">
+    <div class="bg-emerald-900 text-white text-center text-sm py-2">
+        Go and purchase our latest products 
+        <a href="#" class="underline font-semibold">Shopping</a>
+        <button onclick="this.parentElement.style.display='none'" 
+                class="absolute right-2 top-1 text-white hover:text-gray-300 font-bold text-lg">
+            &times;
+        </button>
+    </div>
 
-<!-- top bar -->
-<div class="bg-emerald-900 text-white text-center text-sm py-2">
-Go and purchase our latest products    <a href="#" class="underline font-semibold">Shopping</a>
-    <button onclick="this.parentElement.style.display='none'"
-            class="absolute right-2 top-1 text-white hover:text-gray-300 font-bold text-lg">
-        &times;
-    </button>
-</div>
-<!-- main container -->
-<div class="max-w-6xl mx-auto px-4 py-8 bg-[#f9f6ee]">
+    <div class="max-w-6xl mx-auto px-4 py-8 bg-[#f9f6ee]">
+        <h1 class="text-3xl font-bold tracking-wide mb-6">YOUR CART</h1>
 
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Cart Items -->
+            <div id="cart-items" class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-6 space-y-6">
+                @if(!empty($cart))
+                    @foreach($cart as $id => $item)
+                    <div class="cart-item flex gap-4 items-center border border-gray-100 rounded-xl p-4"
+                         data-cart-id="{{ $id }}">
+                        
+                        <img src="{{ $item['image'] ? asset('storage/products/' . $item['image']) : asset('images/products/default.jpg') }}"
+                             class="w-20 h-20 rounded-lg object-cover" alt="{{ $item['name'] }}">
 
+                        <div class="flex-1">
+                            <p class="item-name font-semibold text-slate-900">{{ $item['name'] }}</p>
+                            <p class="mt-2 font-semibold text-lg">
+                                Rs <span class="item-price">{{ number_format($item['price'], 0) }}</span>
+                            </p>
+                        </div>
 
-    <h1 class="text-3xl font-bold tracking-wide mb-6">YOUR CART</h1>
+                        <div class="flex items-center gap-3">
+                            <button class="qty-minus w-8 h-8 flex items-center justify-center rounded-full border hover:bg-gray-100 transition-colors"
+                                    data-cart-id="{{ $id }}">-</button>
+                            
+                            <span class="qty text-base font-medium w-8 text-center" 
+                                  data-qty="{{ $item['quantity'] }}">{{ $item['quantity'] }}</span>
+                            
+                            <button class="qty-plus w-8 h-8 flex items-center justify-center rounded-full border hover:bg-gray-100 transition-colors"
+                                    data-cart-id="{{ $id }}">+</button>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <button class="remove-item text-red-500 hover:text-red-700 ml-6 transition-colors"
+                                    data-cart-id="{{ $id }}">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
 
-        <!--left side -->
-        <div id="cart-items" class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-6 space-y-4">
-
-            <!-- Items 1 -->
-            <div class="cart-item flex gap-4 items-center border border-gray-100 rounded-xl p-4"
-                 data-price="500">
-                <img src="/"
-                     class="w-20 h-20 rounded-lg object-cover" alt="">
-                <div class="flex-1">
-                    <p class="item-name font-semibold text-slate-900">Gradient Graphic T-shirt</p>
-                    <p class="text-xs text-gray-500">Size: Large</p>
-                    <p class="text-xs text-gray-500">Color: White</p>
-                    <p class="mt-2 font-semibold text-lg">Rs<span class="item-price">500</span>
-                    </p>
-                    <span class="item-total">Rs 0</span>
-
-                </div>
-                <div class="flex items-center gap-3">
-                    <button class="qty-minus w-8 h-8 flex items-center justify-center rounded-full border">
-                        -
-                    </button>
-                    <span class="qty text-base" data-qty="1">1</span>
-                    <button class="qty-plus w-8 h-8 flex items-center justify-center rounded-full border">
-                        +
-                    </button>
-                    <button class="remove-item text-red-500 text-lg ml-2" title="Remove">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div>
-                <!-- Items 2 -->
-            <div class="cart-item flex gap-4 items-center border border-gray-100 rounded-xl p-4"
-                 data-price="800">
-                <img src="/"
-                     class="w-20 h-20 rounded-lg object-cover" alt="">
-                <div class="flex-1">
-                    <p class="item-name font-semibold text-slate-900">Checkered Shirt</p>
-                    <p class="text-xs text-gray-500">Size: Medium</p>
-                    <p class="text-xs text-gray-500">Color: Red</p>
-                    <p class="mt-2 font-semibold text-lg">Rs<span class="item-price">800</span></p>
-                    <span class="item-total">Rs 0</span>
-
-                </div>
-                <div class="flex items-center gap-3">
-                    <button class="qty-minus w-8 h-8 flex items-center justify-center rounded-full border">
-                        -
-                    </button>
-                    <span class="qty text-base" data-qty="1">1</span>
-                    <button class="qty-plus w-8 h-8 flex items-center justify-center rounded-full border">
-                        +
-                    </button>
-                    <button class="remove-item text-red-500 text-lg ml-2" title="Remove">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div>
-            <!--items 3 -->
-
-            <div class="cart-item flex gap-4 items-center border border-gray-100 rounded-xl p-4"
-                 data-price="1200">
-                <img src="/"
-                     class="w-20 h-20 rounded-lg object-cover" alt="">
-                <div class="flex-1">
-                    <p class="item-name font-semibold text-slate-900">Skinny Fit Jeans</p>
-                    <p class="text-xs text-gray-500">Size: Large</p>
-                    <p class="text-xs text-gray-500">Color: Blue</p>
-                    <p class="mt-2 font-semibold text-lg">Rs<span class="item-price">1200</span></p>
-                    <span class="item-total">Rs 0</span>
-
-                </div>
-                <div class="flex items-center gap-3">
-                    <button class="qty-minus w-8 h-8 flex items-center justify-center rounded-full border">
-                        -
-                    </button>
-                    <span class="qty text-base" data-qty="1">1</span>
-                    <button class="qty-plus w-8 h-8 flex items-center justify-center rounded-full border">
-                        +
-                    </button>
-                    <button class="remove-item text-red-500 text-lg ml-2" title="Remove">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
+                        <div class="ml-auto text-right">
+                            <span class="item-total font-semibold text-lg block">
+                                Rs {{ number_format($item['price'] * $item['quantity'], 0) }}
+                            </span>
+                        </div>
+                    </div>
+                    @endforeach
+                @else
+                    <div class="text-center py-20">
+                        <p class="text-2xl text-gray-400 mb-4">Your cart is empty 🛒</p>
+                        <a href="{{ route('frontend.products.index') }}" 
+                           class="inline-block bg-black text-white px-10 py-4 rounded-full hover:bg-gray-800 transition-colors">
+                            Continue Shopping
+                        </a>
+                    </div>
+                @endif
             </div>
 
-        </div>
-
-        <!-- Right side-->
-        <div class="bg-white rounded-2xl shadow-sm p-20 flex flex-col justify-between">
-            <div>
-                <h2 class="text-lg font-semibold mb-4">Order Summary</h2>
-
-                <div class="space-y-2 text-sm">
+            <!-- Order Summary -->
+            <div class="bg-white rounded-2xl shadow-sm p-8 flex flex-col">
+                <h2 class="text-lg font-semibold mb-6">Order Summary</h2>
+                
+                <div class="space-y-3 text-sm flex-1">
                     <div class="flex justify-between">
                         <span>Subtotal</span>
-                        <span class="font-semibold">Rs<span id="subtotal">2500</span></span>
+                        <span class="font-semibold" id="subtotal">Rs 0</span>
                     </div>
                     <div class="flex justify-between text-red-500">
                         <span>Discount (-20%)</span>
-                        <span>- Rs<span id="discount">500</span></span>
+                        <span id="discount">- Rs 0</span>
                     </div>
                     <div class="flex justify-between">
                         <span>Delivery Fee</span>
-                        <span>Rs<span id="delivery">100</span></span>
+                        <span id="delivery">Rs 100</span>
                     </div>
                 </div>
 
-                <div class="border-t mt-4 pt-4 flex justify-between items-center">
-                    <span class="font-semibold text-base">Total</span>
-                    <span class="font-bold text-xl">Rs<span id="total">2100</span></span>
+                <div class="border-t mt-6 pt-6 flex justify-between items-center">
+                    <span class="font-semibold">Total</span>
+                    <span class="font-bold text-2xl" id="total">Rs 0</span>
                 </div>
+
+               <a href="{{ route('frontend.checkout') }}" 
+                    class="mt-8 w-full rounded-full bg-black text-white py-4 font-semibold flex items-center justify-center gap-2 hover:bg-gray-900 transition-all">
+                    Proceed to Checkout →
+                </a>
             </div>
-<button
-  class="mt-6 w-full rounded-full bg-black text-white py-3 font-semibold flex items-center justify-center gap-2 hover:bg-black/80 transition-colors ">
-  Go to Checkout
-  <span>→</span>
-</button>
-
         </div>
 
-    </div>
-
-    <!-- stay connected section -->
-    <div class="mt-10 bg-emerald-900 text-white rounded-3xl p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-        <div class="max-w-md">
-            <h3 class="text-2xl font-semibold mb-2">
-                STAY CONNECTED ABOUT OUR LATEST OFFERS
-            </h3>
-            <p class="text-sm text-emerald-100">
-                Be the first to know about new arrivals, sales, and exclusive offers.
-            </p>
-        </div>
-
-        <div class="w-full md:w-80 space-y-3">
-            <a href="/shopping">
-                <button  class="w-full rounded-full bg-white text-emerald-900 py-2 font-bold text-sm
-         text-center block
-         transition-all duration-200
-         hover:text-base">
-             connected with us
-            </button>
-            </a>
-
+        <!-- Stay Connected -->
+        <div class="mt-10 bg-emerald-900 text-white rounded-3xl p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div class="max-w-md">
+                <h3 class="text-2xl font-semibold mb-2">STAY CONNECTED ABOUT OUR LATEST OFFERS</h3>
+                <p class="text-sm text-emerald-100">Be the first to know about new arrivals, sales, and exclusive offers.</p>
+            </div>
+            <div class="w-full md:w-80">
+                <a href="/shopping">
+                    <button class="w-full rounded-full bg-white text-emerald-900 py-3 font-bold hover:scale-105 transition-all">
+                        CONNECT WITH US
+                    </button>
+                </a>
+            </div>
         </div>
     </div>
 
-</div>
+    <!-- JavaScript -->
+    <script>
+        // Recalculate totals
+        function recalcTotals() {
+            let subtotal = 0;
+            document.querySelectorAll('.cart-item').forEach(item => {
+                const price = parseFloat(item.querySelector('.item-price').innerText.replace(/[^0-9.]/g, '')) || 0;
+                const qty = parseInt(item.querySelector('.qty').dataset.qty) || 1;
+                const itemTotal = price * qty;
 
-<!-- js  -->
-<script>
+                const totalEl = item.querySelector('.item-total');
+                if (totalEl) totalEl.innerText = 'Rs ' + itemTotal.toLocaleString('en-IN');
 
-function recalcTotals() {
-    let subtotal = 0;
+                subtotal += itemTotal;
+            });
 
-    document.querySelectorAll(".cart-item").forEach(item => {
-        const price = parseInt(item.dataset.price, 10);
-        const qty = parseInt(item.querySelector(".qty").dataset.qty, 10);
+            const discountPercent = 20;
+            const discountAmount = Math.round(subtotal * discountPercent / 100);
+            const deliveryFee = subtotal > 0 ? 100 : 0;
+            const total = subtotal - discountAmount + deliveryFee;
 
-        // NEW: calculate item total (price × qty)
-        const itemTotal = price * qty;
-
-        // NEW: update item total text in UI
-        const itemTotalElement = item.querySelector(".item-total");
-        if (itemTotalElement) {
-            itemTotalElement.innerText = "Rs " + itemTotal;
+            document.getElementById('subtotal').innerText = 'Rs ' + subtotal.toLocaleString('en-IN');
+            document.getElementById('discount').innerText = '- Rs ' + discountAmount.toLocaleString('en-IN');
+            document.getElementById('delivery').innerText = 'Rs ' + deliveryFee.toLocaleString('en-IN');
+            document.getElementById('total').innerText = 'Rs ' + total.toLocaleString('en-IN');
         }
 
-        subtotal += itemTotal;
-    });
+        // AJAX Helpers
+        async function cartAction(url, data) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify(data)
+            });
+            return response.json();
+        }
 
-    let discountPercent = 20;
-    let discountAmount = (subtotal * discountPercent) / 100;
-    let deliveryFee = subtotal > 0 ? 100 : 0;
-    let total = subtotal - discountAmount + deliveryFee;
+        // Update Quantity
+        async function updateQuantity(cartId, newQty) {
+            const result = await cartAction("{{ route('frontend.cart.update') }}", {
+                id: cartId,
+                quantity: newQty
+            });
 
-    document.getElementById("subtotal").innerText = subtotal;
-    document.getElementById("discount").innerText = discountAmount;
-    document.getElementById("delivery").innerText = deliveryFee;
-    document.getElementById("total").innerText = total;
-}
+            if (result.success) {
+                recalcTotals();
+            }
+        }
 
+        // Remove Item
+        async function removeItem(cartId) {
+            if (!confirm('Remove this item from cart?')) return;
 
-// Handle +, -, and delete buttons
-document.getElementById("cart-items").addEventListener("click", (e) => {
+            const result = await cartAction("{{ route('frontend.cart.remove') }}", { id: cartId });
 
-    const item = e.target.closest(".cart-item");
-    if (!item) return;
+            if (result.success) {
+                const item = document.querySelector(`.cart-item[data-cart-id="${cartId}"]`);
+                if (item) item.remove();
+                recalcTotals();
+            }
+        }
 
-    const qtySpan = item.querySelector(".qty");
-    let qty = parseInt(qtySpan.dataset.qty);
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            const cartContainer = document.getElementById('cart-items');
 
-    // Increase quantity
-    if (e.target.classList.contains("qty-plus")) {
-        qty++;
-    }
+            cartContainer.addEventListener('click', async (e) => {
+                const item = e.target.closest('.cart-item');
+                if (!item) return;
 
-    // Decrease quantity
-    else if (e.target.classList.contains("qty-minus")) {
-        qty = Math.max(1, qty - 1);
-    }
+                const cartId = item.dataset.cartId;
+                const qtySpan = item.querySelector('.qty');
+                let qty = parseInt(qtySpan.dataset.qty);
 
-    // Remove item
-    else if (e.target.closest(".remove-item")) {
-        item.remove();
-        recalcTotals();
-        return;
-    }
+                if (e.target.classList.contains('qty-plus')) {
+                    qty++;
+                    qtySpan.dataset.qty = qty;
+                    qtySpan.textContent = qty;
+                    await updateQuantity(cartId, qty);
+                }
+                else if (e.target.classList.contains('qty-minus')) {
+                    qty = Math.max(1, qty - 1);
+                    qtySpan.dataset.qty = qty;
+                    qtySpan.textContent = qty;
+                    await updateQuantity(cartId, qty);
+                }
+                else if (e.target.closest('.remove-item')) {
+                    await removeItem(cartId);
+                }
+            });
 
-    qtySpan.dataset.qty = qty;
-    qtySpan.textContent = qty;
+            // Initial calculation
+            recalcTotals();
+        });
 
-    recalcTotals();
-});
-
-
-// Initial calculation
-recalcTotals();
-
-</script>
-
-</body>
+       
+    </script>
 </x-frontend-layout>
