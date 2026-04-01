@@ -24,6 +24,33 @@
         </div>
     </section>
 
+    <!-- Success/Error Messages -->
+    @if(session('success'))
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-sm">
+            <div class="flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>{{ session('success') }}</span>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-sm">
+            <div class="flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                <span>{{ session('error') }}</span>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Product Detail Section -->
     <section class="py-8 md:py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -39,17 +66,6 @@
                                  id="main-product-image">
                         </div>
                     </div>
-                    
-                    <!-- Additional Images (if you have multiple images feature) -->
-                    <!--
-                    <div class="flex space-x-4 overflow-x-auto pb-2">
-                        <div class="flex-shrink-0 w-20 h-20 bg-gray-50 rounded-lg p-2 cursor-pointer border-2 border-green-500">
-                            <img src="{{ $product->image ? asset('storage/products/' . $product->image) : asset('images/products/default.jpg') }}" 
-                                 alt="{{ $product->name }}" 
-                                 class="w-full h-full object-contain">
-                        </div>
-                    </div>
-                    -->
                 </div>
                 
                 <!-- Product Info -->
@@ -87,7 +103,7 @@
                         <div class="flex items-center gap-2">
                             <div class="flex items-center">
                                 @php
-                                    $rating = $product->rating;
+                                    $rating = $product->averageRating;
                                     $fullStars = floor($rating);
                                     $hasHalfStar = ($rating - $fullStars) >= 0.5;
                                 @endphp
@@ -107,7 +123,9 @@
                                     @endif
                                 @endfor
                             </div>
-                            <span class="text-gray-600">{{ $product->rating }} ({{ $product->reviews }} reviews)</span>
+                            <a href="#reviews" class="text-gray-600 hover:text-green-700">
+                                {{ number_format($product->averageRating, 1) }} ({{ $product->totalReviews }} reviews)
+                            </a>
                         </div>
                         
                         <!-- Stock Status -->
@@ -305,55 +323,130 @@
     </section>
     @endif
 
-    <!-- Product Reviews Section (Optional) -->
-    <section class="py-12 bg-white">
+    <!-- Product Reviews Section -->
+    <section class="py-12 bg-white" id="reviews">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Customer Reviews</h2>
             
+            @if($product->totalReviews > 0)
             <!-- Overall Rating -->
             <div class="bg-gray-50 rounded-xl p-6 mb-8">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div class="text-center md:text-left">
-                        <div class="text-5xl font-bold text-gray-900 mb-2">{{ $product->rating }}</div>
+                        <div class="text-5xl font-bold text-gray-900 mb-2">{{ number_format($product->averageRating, 1) }}</div>
                         <div class="flex items-center justify-center md:justify-start mb-2">
                             @for($i = 1; $i <= 5; $i++)
-                                @if($i <= floor($product->rating))
-                                    <svg class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                @if($i <= round($product->averageRating))
+                                    <svg class="w-6 h-6 text-yellow-400 fill-current" viewBox="0 0 20 20">
                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                                     </svg>
                                 @else
-                                    <svg class="w-6 h-6 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg class="w-6 h-6 text-gray-300 fill-current" viewBox="0 0 20 20">
                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                                     </svg>
                                 @endif
                             @endfor
                         </div>
-                        <p class="text-gray-600">Based on {{ $product->reviews }} reviews</p>
+                        <p class="text-gray-600">Based on {{ $product->totalReviews }} reviews</p>
                     </div>
                     
-                    <!-- Write Review Button -->
-                    <button class="cart-btn-unified px-8" onclick="showReviewModal()">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                        </svg>
-                        Write a Review
-                    </button>
+                    <!-- Rating Distribution -->
+                    <div class="flex-1 max-w-md">
+                        @foreach([5,4,3,2,1] as $star)
+                            @php
+                                $count = $product->reviews()->where('rating', $star)->count();
+                                $percentage = $product->totalReviews > 0 ? ($count / $product->totalReviews) * 100 : 0;
+                            @endphp
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="w-12 text-sm">{{ $star }} <i class="fas fa-star text-yellow-400 text-xs"></i></div>
+                                <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-yellow-400 rounded-full" style="width: {{ $percentage }}%"></div>
+                                </div>
+                                <div class="w-12 text-sm text-gray-500">{{ $count }}</div>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
+            @endif
             
-            <!-- Placeholder for reviews (you can implement actual reviews later) -->
-            <div class="text-center py-12">
-                <div class="inline-block p-4 bg-gray-100 rounded-full mb-4">
-                    <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
-                    </svg>
+            <!-- Write a Review Button -->
+            @auth
+                @php
+                    $userReview = $product->reviews()->where('user_id', auth()->id())->first();
+                @endphp
+                
+                @if(!$userReview)
+                    <div class="mb-8">
+                        <button onclick="toggleReviewForm()" 
+                                class="bg-gradient-to-r from-green-800 to-emerald-700 text-white px-6 py-2 rounded-lg font-medium hover:from-green-900 hover:to-emerald-800 transition-all duration-300">
+                            <i class="fas fa-edit mr-2"></i>
+                            Write a Review
+                        </button>
+                    </div>
+                    
+                    <div id="review-form-container" class="hidden mb-8">
+                        @include('frontend.partials.review-form', ['product' => $product])
+                    </div>
+                @else
+                    <div class="mb-8 p-4 bg-blue-50 rounded-lg">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <p class="text-blue-700">You have already reviewed this product. Thank you for your feedback!</p>
+                        </div>
+                        
+                    </div>
+                @endif
+            @else
+                <div class="mb-8 p-4 bg-gray-50 rounded-lg text-center">
+                    <p class="text-gray-600">
+                        Please <a href="{{ route('login') }}" class="text-green-700 font-semibold hover:underline">login</a> to write a review.
+                    </p>
                 </div>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">No Reviews Yet</h3>
-                <p class="text-gray-600 mb-6">Be the first to review this product!</p>
-                <button class="cart-btn-unified px-8" onclick="showReviewModal()">
-                    Write First Review
-                </button>
-            </div>
+            @endauth
+            
+            <!-- Reviews List -->
+            @if($product->approvedReviews()->count() > 0)
+                <div class="space-y-4 mt-8">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Recent Reviews</h3>
+                    @foreach($product->approvedReviews()->limit(5)->get() as $review)
+                        @include('frontend.partials.review-card', ['review' => $review])
+                    @endforeach
+                    
+                    @if($product->approvedReviews()->count() > 5)
+                        <div class="text-center mt-6">
+                            <a href="{{ route('reviews.index', $product) }}" 
+                               class="inline-block text-green-700 hover:text-green-900 font-medium">
+                                Read all {{ $product->approvedReviews()->count() }} reviews →
+                            </a>
+                        </div>
+                    @endif
+                </div>
+            @else
+                <div class="text-center py-12 bg-gray-50 rounded-xl">
+                    <div class="inline-block p-4 bg-gray-100 rounded-full mb-4">
+                        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No Reviews Yet</h3>
+                    <p class="text-gray-600 mb-4">Be the first to review this product!</p>
+                    @auth
+                        @if(!isset($userReview) || !$userReview)
+                            <button onclick="toggleReviewForm()" 
+                                    class="cart-btn-unified inline-flex px-6">
+                                Write First Review
+                            </button>
+                        @endif
+                    @else
+                        <a href="{{ route('login') }}" class="cart-btn-unified inline-flex px-6">
+                            Login to Review
+                        </a>
+                    @endauth
+                </div>
+            @endif
         </div>
     </section>
 
@@ -367,7 +460,7 @@
         }
         
         .cart-btn-unified {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             padding: 0.75rem 1.5rem;
@@ -388,7 +481,7 @@
         }
         
         .buy-now-btn-unified {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             padding: 0.75rem 1.5rem;
@@ -409,7 +502,7 @@
         }
         
         .wishlist-btn-unified {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             width: 3rem;
@@ -422,11 +515,11 @@
             cursor: pointer;
         }
         
-        .wishlist-btn-unified:hover {
+        .wishlist-btn-unified:hover,
+        .wishlist-btn-unified.active {
             background-color: #065f46;
             color: white;
             border-color: #065f46;
-            transform: translateY(-1px);
         }
         
         .line-clamp-1 {
@@ -465,8 +558,19 @@
             }
         }
         
+        // Toggle review form
+        function toggleReviewForm() {
+            const form = document.getElementById('review-form-container');
+            if (form.classList.contains('hidden')) {
+                form.classList.remove('hidden');
+                form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                form.classList.add('hidden');
+            }
+        }
+        
         // Add to cart function
-        function addToCart(productId, event = null) {
+        async function addToCart(productId, event = null) {
             if (event) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -474,31 +578,43 @@
             
             const quantity = document.getElementById('quantity-input').value;
             
-            // Show loading state
             const btn = event ? event.target.closest('.cart-btn-unified') : document.querySelector('.cart-btn-unified');
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+            btn.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>';
             btn.disabled = true;
             
-            // Simulate API call (replace with actual API call)
-            setTimeout(() => {
-                // Show success message
-                showToast('Product added to cart successfully!', 'success');
+            try {
+                const response = await fetch('{{ route("cart.add") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        quantity: quantity
+                    })
+                });
                 
-                // Reset button
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Product added to cart successfully!', 'success');
+                    updateCartCount(data.cart_count);
+                } else {
+                    showToast(data.message || 'Failed to add to cart', 'error');
+                }
+            } catch (error) {
+                showToast('An error occurred. Please try again.', 'error');
+            } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-                
-                // Update cart count (if you have a cart count element)
-                updateCartCount();
-            }, 1000);
+            }
         }
         
         // Buy now function
         function buyNow(productId) {
             const quantity = document.getElementById('quantity-input').value;
-            
-            // Redirect to checkout page with product info
             window.location.href = `/checkout?product=${productId}&quantity=${quantity}`;
         }
         
@@ -507,42 +623,40 @@
             const btn = document.getElementById('wishlist-btn');
             const isActive = btn.classList.contains('active');
             
+            // Simulate API call (replace with actual)
             if (isActive) {
-                // Remove from wishlist
                 btn.classList.remove('active');
                 btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>';
                 showToast('Removed from wishlist', 'info');
             } else {
-                // Add to wishlist
                 btn.classList.add('active');
                 btn.innerHTML = '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>';
                 showToast('Added to wishlist', 'success');
             }
+            
+            localStorage.setItem(`wishlist_${productId}`, !isActive);
         }
         
         // Toast notification function
         function showToast(message, type = 'success') {
-            // Create toast element
             const toast = document.createElement('div');
-            toast.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg text-white transform transition-all duration-300 translate-x-full ${type === 'success' ? 'bg-green-900' : 'bg-blue-900'}`;
+            const bgColor = type === 'success' ? 'bg-green-600' : (type === 'error' ? 'bg-red-600' : 'bg-blue-600');
+            toast.className = `fixed top-20 right-4 z-50 px-6 py-4 rounded-lg shadow-lg text-white transform transition-all duration-300 translate-x-full ${bgColor}`;
             toast.innerHTML = `
                 <div class="flex items-center gap-3">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type === 'success' ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12'}"></path>
                     </svg>
                     <span>${message}</span>
                 </div>
             `;
             
-            // Add to body
             document.body.appendChild(toast);
             
-            // Show toast
             setTimeout(() => {
                 toast.classList.remove('translate-x-full');
             }, 10);
             
-            // Remove after 3 seconds
             setTimeout(() => {
                 toast.classList.add('translate-x-full');
                 setTimeout(() => {
@@ -551,32 +665,28 @@
             }, 3000);
         }
         
-        // Update cart count (placeholder function)
-        function updateCartCount() {
+        // Update cart count
+        function updateCartCount(count) {
             const cartCount = document.querySelector('.cart-count');
             if (cartCount) {
-                const currentCount = parseInt(cartCount.textContent) || 0;
-                cartCount.textContent = currentCount + 1;
+                cartCount.textContent = count || (parseInt(cartCount.textContent) || 0) + 1;
             }
-        }
-        
-        // Review modal (placeholder function)
-        function showReviewModal() {
-            alert('Review feature will be implemented soon!');
         }
         
         // Prevent quantity input from non-numeric values
-        document.getElementById('quantity-input').addEventListener('input', function(e) {
-            this.value = this.value.replace(/[^0-9]/g, '');
-            if (this.value === '' || parseInt(this.value) < 1) {
-                this.value = 1;
-            }
-        });
+        const quantityInput = document.getElementById('quantity-input');
+        if (quantityInput) {
+            quantityInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+                if (this.value === '' || parseInt(this.value) < 1) {
+                    this.value = 1;
+                }
+            });
+        }
         
-        // Initialize wishlist button if product is in wishlist
+        // Initialize wishlist button
         function initWishlist() {
-            // Check localStorage or make API call to see if product is in wishlist
-            const isInWishlist = localStorage.getItem(`wishlist_${ {{ $product->id }} }`) === 'true';
+            const isInWishlist = localStorage.getItem(`wishlist_{{ $product->id }}`) === 'true';
             if (isInWishlist) {
                 const btn = document.getElementById('wishlist-btn');
                 btn.classList.add('active');
@@ -584,7 +694,6 @@
             }
         }
         
-        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             initWishlist();
         });

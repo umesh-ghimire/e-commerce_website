@@ -23,7 +23,7 @@ class User extends Authenticatable
         'password',
         'google_id',
         'facebook_id',
-       'avatar',
+        'avatar',
     ];
 
     /**
@@ -49,4 +49,27 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Get the orders for the user.
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Get the reviews for the user.
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Get the cart items for the user.
+     */
+    public function cart()
+    {
+        return $this->hasMany(Cart::class);
+    }
 }

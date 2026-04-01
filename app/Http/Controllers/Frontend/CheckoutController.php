@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Mail\OrderConfirmationMail;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use Illuminate\Support\Facades\Mail;
 
 class CheckoutController extends Controller
 {
@@ -50,6 +52,8 @@ public function store(Request $request)
         'notes'             => 'nullable|string',
     ]);
 
+    Mail::to($order->user->email)->send(new OrderConfirmationMail($order));
+    
     $cart = session()->get('cart', []);
 
     if (empty($cart) && $request->has('product')) {
@@ -121,9 +125,8 @@ public function store(Request $request)
         ]);
     }
 
-    // Cash on Delivery
-    return redirect()->route('frontend.order.success', $order->id)
-                     ->with('success', 'Your order has been placed successfully!');
+    return redirect()->route('frontend.order.success', $order)
+        ->with('success', 'Order placed successfully! Check your email for confirmation.');
 }
 
 

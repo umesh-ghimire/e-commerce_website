@@ -15,15 +15,17 @@ class Category extends Model
         'description',
         'image',
         'icon',
-        // 'color',
-        // 'parent_id',
-        // 'product_count',
+        'color',
+        'parent_id',
+        'product_count',
         'is_active',
-        // 'order'
+        'order'
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'product_count' => 'integer',
+        'order' => 'integer',
     ];
 
     /**

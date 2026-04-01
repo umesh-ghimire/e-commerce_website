@@ -24,6 +24,9 @@ class Order extends Model
         'payment_method',
         'payment_status',
         'notes',
+        'payment_proof',
+        'payment_notes',
+        'payment_verified_at',
     ];
 
     protected $casts = [
@@ -31,6 +34,7 @@ class Order extends Model
         'tax' => 'decimal:2',
         'shipping' => 'decimal:2',
         'total' => 'decimal:2',
+        'payment_verified_at' => 'datetime',
     ];
 
     // Relationships
@@ -49,8 +53,10 @@ class Order extends Model
         return $this->hasManyThrough(
             OrderItem::class,
             Product::class,
-            
-            'product_id'
+            'id',
+            'product_id',
+            'id',
+            'id'
         );
     }
 }

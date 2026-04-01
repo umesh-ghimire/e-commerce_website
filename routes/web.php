@@ -8,6 +8,8 @@ use App\Http\Controllers\Frontend\CategoryController;
 use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\ProductController; // ← Fixed namespace
+use App\Http\Controllers\Frontend\ReviewController;
+use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SearchController;
 
@@ -31,6 +33,15 @@ Route::prefix('products')->group(function () {
 Route::get('/search', [SearchController::class, 'search'])->name('search');
 Route::get('/quick-search', [SearchController::class, 'quickSearch'])->name('quick.search');
 
+// Newsletter Routes
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
+
+// Review Routes
+Route::middleware('auth')->group(function () {
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+});
+
+Route::get('/products/{product}/reviews', [ReviewController::class, 'index'])->name('reviews.index');
 
 // Cart Routes
 Route::get('/cart', [CartController::class, 'index'])->name('cart');

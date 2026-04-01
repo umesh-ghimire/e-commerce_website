@@ -1,13 +1,13 @@
 <x-frontend-layout>
     <!-- Hero Banner -->
-    <section class="py-16 bg-linear-to-br from-green-50 to-white">
+    <section class="py-16 bg-gradient-to-br from-green-50 to-white">
         <div class="container mx-auto px-4">
             <div class="text-center">
                 <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                     Discover Amazing Products
                 </h1>
                 <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-                    Browse through our collection of {{ $allProducts->count() }}+ quality products with great deals and discounts
+                    Browse through our collection of {{ number_format($allProducts->count()) }}+ quality products with great deals and discounts
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="#products" class="hero-btn-unified inline-flex items-center justify-center gap-2">
@@ -37,6 +37,10 @@
                              alt="New Arrivals"
                              class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500">
                     </a>
+                    @else
+                    <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                         alt="New Arrivals"
+                         class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500">
                     @endif
                     <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
                         <span class="inline-block px-3 py-1 bg-green-500 text-white text-sm font-semibold rounded-full mb-2">
@@ -94,335 +98,17 @@
             <div id="trending-products">
                 <!-- Best Sellers Tab -->
                 <div class="trending-tab-content active" id="best-sellers-content">
-                    <div class="relative">
-                        <div class="trending-products-horizontal-scroll flex space-x-6 pb-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory">
-                            @foreach($bestSellers as $product)
-                            <div class="flex-shrink-0 w-72 snap-start">
-                                <!-- Product Card Component -->
-                                <div class="product-card group">
-                                    <div class="product-card-image-container">
-                                        <a href="{{ route('frontend.products.show', $product->slug) }}">
-                                            <img src="{{ $product->image ? asset('storage/products/' . $product->image) : asset('images/products/default.jpg') }}"
-                                                 alt="{{ $product->name }}"
-                                                 class="product-card-image">
-                                        </a>
-                                        <!-- Badges -->
-                                        <div class="product-card-badges">
-                                            @if($product->is_best_seller)
-                                            <span class="product-badge product-badge-best-seller">Best Seller</span>
-                                            @endif
-                                            @if($product->discount > 0)
-                                            <span class="product-badge product-badge-discount">-{{ $product->discount }}%</span>
-                                            @endif
-                                        </div>
-                                        <button class="product-wishlist-btn">
-                                            <i class="far fa-heart"></i>
-                                        </button>
-                                    </div>
-                                    <div class="product-card-content">
-                                        <h3 class="product-card-title">
-                                            <a href="{{ route('frontend.products.show', $product->slug) }}">
-                                                {{ $product->name }}
-                                            </a>
-                                        </h3>
-                                        
-                                        <!-- Product Meta -->
-                                        <div class="product-card-meta">
-                                            @if(isset($product->brand) && $product->brand)
-                                            <a href="{{ route('frontend.products.index') }}?brand={{ urlencode($product->brand) }}#products" 
-                                               class="product-card-brand">
-                                                <i class="fas fa-tag"></i>
-                                                {{ $product->brand }}
-                                            </a>
-                                            @endif
-                                            @if($product->category)
-                                            <a href="{{ route('frontend.products.index') }}?category={{ $product->category->slug }}#products" 
-                                               class="product-card-category">
-                                                <i class="fas fa-folder"></i>
-                                                {{ $product->category->name }}
-                                            </a>
-                                            @endif
-                                        </div>
-                                        
-                                        <p class="product-card-description">{{ Str::limit($product->description, 70) }}</p>
-                                        
-                                        <!-- Rating and Stock -->
-                                        <div class="product-card-rating-stock">
-                                            <div class="product-card-rating">
-                                                <div class="product-stars">
-                                                    @for($i = 1; $i <= 5; $i++)
-                                                        @if($i <= floor($product->rating))
-                                                            <i class="fas fa-star"></i>
-                                                        @elseif($i <= $product->rating)
-                                                            <i class="fas fa-star-half-alt"></i>
-                                                        @else
-                                                            <i class="far fa-star"></i>
-                                                        @endif
-                                                    @endfor
-                                                </div>
-                                                <span class="product-rating-count">({{ $product->reviews }})</span>
-                                            </div>
-                                            <span class="product-stock-badge product-stock-{{ $product->stock }}">
-                                                {{ $product->stock === 'available' ? 'In Stock' : ($product->stock === 'low' ? 'Low Stock' : 'Out of Stock') }}
-                                            </span>
-                                        </div>
-                                        
-                                        <!-- Price and Action -->
-                                        <div class="product-card-price-action">
-                                            <div class="product-card-prices">
-                                                <span class="product-card-current-price">₹{{ number_format($product->price, 0) }}</span>
-                                                @if($product->old_price)
-                                                <span class="product-card-old-price">₹{{ number_format($product->old_price, 0) }}</span>
-                                                @endif
-                                            </div>
-                                            @if($product->stock !== 'out_of_stock')
-                                            <button class="product-card-add-to-cart" onclick="addToCart({{ $product->id }})">
-                                                <i class="fas fa-shopping-cart"></i>
-                                                Add to Cart
-                                            </button>
-                                            @else
-                                            <span class="product-out-of-stock">Out of Stock</span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- End Product Card Component -->
-                            </div>
-                            @endforeach
-                        </div>
-                        
-                        <!-- Scroll indicators -->
-                        <div class="flex justify-center mt-4 space-x-2">
-                            <button class="scroll-left-btn w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors">
-                                <i class="fas fa-chevron-left text-gray-600"></i>
-                            </button>
-                            <button class="scroll-right-btn w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors">
-                                <i class="fas fa-chevron-right text-gray-600"></i>
-                            </button>
-                        </div>
-                    </div>
+                    @include('frontend.partials.product-horizontal-scroll', ['products' => $bestSellers, 'type' => 'best-seller'])
                 </div>
                 
                 <!-- Trending Products Tab -->
                 <div class="trending-tab-content hidden" id="trending-content">
-                    <div class="relative">
-                        <div class="trending-products-horizontal-scroll flex space-x-6 pb-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory">
-                            @foreach($trendingProducts as $product)
-                            <div class="flex-shrink-0 w-72 snap-start">
-                                <!-- Product Card Component -->
-                                <div class="product-card group">
-                                    <div class="product-card-image-container">
-                                        <a href="{{ route('frontend.products.show', $product->slug) }}">
-                                            <img src="{{ $product->image ? asset('storage/products/' . $product->image) : asset('images/products/default.jpg') }}"
-                                                 alt="{{ $product->name }}"
-                                                 class="product-card-image">
-                                        </a>
-                                        <!-- Badges -->
-                                        <div class="product-card-badges">
-                                            @if($product->is_trending)
-                                            <span class="product-badge product-badge-trending">Trending</span>
-                                            @endif
-                                            @if($product->discount > 0)
-                                            <span class="product-badge product-badge-discount">-{{ $product->discount }}%</span>
-                                            @endif
-                                        </div>
-                                        <button class="product-wishlist-btn">
-                                            <i class="far fa-heart"></i>
-                                        </button>
-                                    </div>
-                                    <div class="product-card-content">
-                                        <h3 class="product-card-title">
-                                            <a href="{{ route('frontend.products.show', $product->slug) }}">
-                                                {{ $product->name }}
-                                            </a>
-                                        </h3>
-                                        
-                                        <!-- Product Meta -->
-                                        <div class="product-card-meta">
-                                            @if(isset($product->brand) && $product->brand)
-                                            <a href="{{ route('frontend.products.index') }}?brand={{ urlencode($product->brand) }}#products" 
-                                               class="product-card-brand">
-                                                <i class="fas fa-tag"></i>
-                                                {{ $product->brand }}
-                                            </a>
-                                            @endif
-                                            @if($product->category)
-                                            <a href="{{ route('frontend.products.index') }}?category={{ $product->category->slug }}#products" 
-                                               class="product-card-category">
-                                                <i class="fas fa-folder"></i>
-                                                {{ $product->category->name }}
-                                            </a>
-                                            @endif
-                                        </div>
-                                        
-                                        <p class="product-card-description">{{ Str::limit($product->description, 70) }}</p>
-                                        
-                                        <!-- Rating and Stock -->
-                                        <div class="product-card-rating-stock">
-                                            <div class="product-card-rating">
-                                                <div class="product-stars">
-                                                    @for($i = 1; $i <= 5; $i++)
-                                                        @if($i <= floor($product->rating))
-                                                            <i class="fas fa-star"></i>
-                                                        @elseif($i <= $product->rating)
-                                                            <i class="fas fa-star-half-alt"></i>
-                                                        @else
-                                                            <i class="far fa-star"></i>
-                                                        @endif
-                                                    @endfor
-                                                </div>
-                                                <span class="product-rating-count">({{ $product->reviews }})</span>
-                                            </div>
-                                            <span class="product-stock-badge product-stock-{{ $product->stock }}">
-                                                {{ $product->stock === 'available' ? 'In Stock' : ($product->stock === 'low' ? 'Low Stock' : 'Out of Stock') }}
-                                            </span>
-                                        </div>
-                                        
-                                        <!-- Price and Action -->
-                                        <div class="product-card-price-action">
-                                            <div class="product-card-prices">
-                                                <span class="product-card-current-price">₹{{ number_format($product->price, 0) }}</span>
-                                                @if($product->old_price)
-                                                <span class="product-card-old-price">₹{{ number_format($product->old_price, 0) }}</span>
-                                                @endif
-                                            </div>
-                                            @if($product->stock !== 'out_of_stock')
-                                            <button class="product-card-add-to-cart" onclick="addToCart({{ $product->id }})">
-                                                <i class="fas fa-shopping-cart"></i>
-                                                Add to Cart
-                                            </button>
-                                            @else
-                                            <span class="product-out-of-stock">Out of Stock</span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- End Product Card Component -->
-                            </div>
-                            @endforeach
-                        </div>
-                        
-                        <!-- Scroll indicators -->
-                        <div class="flex justify-center mt-4 space-x-2">
-                            <button class="scroll-left-btn w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors">
-                                <i class="fas fa-chevron-left text-gray-600"></i>
-                            </button>
-                            <button class="scroll-right-btn w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors">
-                                <i class="fas fa-chevron-right text-gray-600"></i>
-                            </button>
-                        </div>
-                    </div>
+                    @include('frontend.partials.product-horizontal-scroll', ['products' => $trendingProducts, 'type' => 'trending'])
                 </div>
                 
                 <!-- New Arrivals Tab -->
                 <div class="trending-tab-content hidden" id="new-arrivals-content">
-                    <div class="relative">
-                        <div class="trending-products-horizontal-scroll flex space-x-6 pb-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory">
-                            @foreach($newArrivals as $product)
-                            <div class="flex-shrink-0 w-72 snap-start">
-                                <!-- Product Card Component -->
-                                <div class="product-card group">
-                                    <div class="product-card-image-container">
-                                        <a href="{{ route('frontend.products.show', $product->slug) }}">
-                                            <img src="{{ $product->image ? asset('storage/products/' . $product->image) : asset('images/products/default.jpg') }}"
-                                                 alt="{{ $product->name }}"
-                                                 class="product-card-image">
-                                        </a>
-                                        <!-- Badges -->
-                                        <div class="product-card-badges">
-                                            @if($product->is_new)
-                                            <span class="product-badge product-badge-new">New</span>
-                                            @endif
-                                            @if($product->discount > 0)
-                                            <span class="product-badge product-badge-discount">-{{ $product->discount }}%</span>
-                                            @endif
-                                        </div>
-                                        <button class="product-wishlist-btn">
-                                            <i class="far fa-heart"></i>
-                                        </button>
-                                    </div>
-                                    <div class="product-card-content">
-                                        <h3 class="product-card-title">
-                                            <a href="{{ route('frontend.products.show', $product->slug) }}">
-                                                {{ $product->name }}
-                                            </a>
-                                        </h3>
-                                        
-                                        <!-- Product Meta -->
-                                        <div class="product-card-meta">
-                                            @if(isset($product->brand) && $product->brand)
-                                            <a href="{{ route('frontend.products.index') }}?brand={{ urlencode($product->brand) }}#products" 
-                                               class="product-card-brand">
-                                                <i class="fas fa-tag"></i>
-                                                {{ $product->brand }}
-                                            </a>
-                                            @endif
-                                            @if($product->category)
-                                            <a href="{{ route('frontend.products.index') }}?category={{ $product->category->slug }}#products" 
-                                               class="product-card-category">
-                                                <i class="fas fa-folder"></i>
-                                                {{ $product->category->name }}
-                                            </a>
-                                            @endif
-                                        </div>
-                                        
-                                        <p class="product-card-description">{{ Str::limit($product->description, 70) }}</p>
-                                        
-                                        <!-- Rating and Stock -->
-                                        <div class="product-card-rating-stock">
-                                            <div class="product-card-rating">
-                                                <div class="product-stars">
-                                                    @for($i = 1; $i <= 5; $i++)
-                                                        @if($i <= floor($product->rating))
-                                                            <i class="fas fa-star"></i>
-                                                        @elseif($i <= $product->rating)
-                                                            <i class="fas fa-star-half-alt"></i>
-                                                        @else
-                                                            <i class="far fa-star"></i>
-                                                        @endif
-                                                    @endfor
-                                                </div>
-                                                <span class="product-rating-count">({{ $product->reviews }})</span>
-                                            </div>
-                                            <span class="product-stock-badge product-stock-{{ $product->stock }}">
-                                                {{ $product->stock === 'available' ? 'In Stock' : ($product->stock === 'low' ? 'Low Stock' : 'Out of Stock') }}
-                                            </span>
-                                        </div>
-                                        
-                                        <!-- Price and Action -->
-                                        <div class="product-card-price-action">
-                                            <div class="product-card-prices">
-                                                <span class="product-card-current-price">₹{{ number_format($product->price, 0) }}</span>
-                                                @if($product->old_price)
-                                                <span class="product-card-old-price">₹{{ number_format($product->old_price, 0) }}</span>
-                                                @endif
-                                            </div>
-                                            @if($product->stock !== 'out_of_stock')
-                                            <button class="product-card-add-to-cart" onclick="addToCart({{ $product->id }})">
-                                                <i class="fas fa-shopping-cart"></i>
-                                                Add to Cart
-                                            </button>
-                                            @else
-                                            <span class="product-out-of-stock">Out of Stock</span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- End Product Card Component -->
-                            </div>
-                            @endforeach
-                        </div>
-                        
-                        <!-- Scroll indicators -->
-                        <div class="flex justify-center mt-4 space-x-2">
-                            <button class="scroll-left-btn w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors">
-                                <i class="fas fa-chevron-left text-gray-600"></i>
-                            </button>
-                            <button class="scroll-right-btn w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors">
-                                <i class="fas fa-chevron-right text-gray-600"></i>
-                            </button>
-                        </div>
-                    </div>
+                    @include('frontend.partials.product-horizontal-scroll', ['products' => $newArrivals, 'type' => 'new'])
                 </div>
             </div>
         </div>
@@ -445,7 +131,7 @@
                     @if(request()->has('brand') && request()->has('search'))
                         Showing {{ $products->count() }} {{ request('brand') }} products matching "{{ request('search') }}"
                     @elseif(request()->has('brand'))
-                        Showing {{ $products->count() }} of {{ $allProducts->where('brand', request('brand'))->count() }} {{ request('brand') }} products
+                        Showing {{ $products->count() }} products
                     @elseif(request()->has('search'))
                         Showing {{ $products->count() }} results for "{{ request('search') }}"
                     @else
@@ -526,13 +212,11 @@
                     @endif
                     
                     <!-- Clear All Filters -->
-                    @if(request()->anyFilled(['brand', 'search', 'category', 'min_price', 'max_price', 'sort']))
                     <a href="{{ route('frontend.products.index') }}#products" 
                        class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800 hover:bg-gray-200">
                         <i class="fas fa-times mr-1"></i>
                         Clear all
                     </a>
-                    @endif
                 </div>
             </div>
             @endif
@@ -722,101 +406,7 @@
                 @if($products->count() > 0)
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     @foreach($products as $product)
-                    <!-- Product Card Component -->
-                    <div class="product-card group">
-                        <div class="product-card-image-container">
-                            <a href="{{ route('frontend.products.show', $product->slug) }}">
-                                <img src="{{ $product->image ? asset('storage/products/' . $product->image) : asset('images/products/default.jpg') }}"
-                                     alt="{{ $product->name }}"
-                                     class="product-card-image">
-                            </a>
-                            <!-- Badges -->
-                            <div class="product-card-badges">
-                                @if($product->is_new)
-                                <span class="product-badge product-badge-new">New</span>
-                                @endif
-                                @if($product->is_best_seller)
-                                <span class="product-badge product-badge-best-seller">Best Seller</span>
-                                @endif
-                                @if($product->is_trending)
-                                <span class="product-badge product-badge-trending">Trending</span>
-                                @endif
-                                @if($product->discount > 0)
-                                <span class="product-badge product-badge-discount">-{{ $product->discount }}%</span>
-                                @endif
-                            </div>
-                            <button class="product-wishlist-btn">
-                                <i class="far fa-heart"></i>
-                            </button>
-                        </div>
-                        <div class="product-card-content">
-                            <h3 class="product-card-title">
-                                <a href="{{ route('frontend.products.show', $product->slug) }}">
-                                    {{ $product->name }}
-                                </a>
-                            </h3>
-                            
-                            <!-- Product Meta -->
-                            <div class="product-card-meta">
-                                @if(isset($product->brand) && $product->brand)
-                                <a href="{{ route('frontend.products.index') }}?brand={{ urlencode($product->brand) }}#products" 
-                                   class="product-card-brand">
-                                    <i class="fas fa-tag"></i>
-                                    {{ $product->brand }}
-                                </a>
-                                @endif
-                                @if($product->category)
-                                <a href="{{ route('frontend.products.index') }}?category={{ $product->category->slug }}#products" 
-                                   class="product-card-category">
-                                    <i class="fas fa-folder"></i>
-                                    {{ $product->category->name }}
-                                </a>
-                                @endif
-                            </div>
-                            
-                            <p class="product-card-description">{{ Str::limit($product->description, 70) }}</p>
-                            
-                            <!-- Rating and Stock -->
-                            <div class="product-card-rating-stock">
-                                <div class="product-card-rating">
-                                    <div class="product-stars">
-                                        @for($i = 1; $i <= 5; $i++)
-                                            @if($i <= floor($product->rating))
-                                                <i class="fas fa-star"></i>
-                                            @elseif($i <= $product->rating)
-                                                <i class="fas fa-star-half-alt"></i>
-                                            @else
-                                                <i class="far fa-star"></i>
-                                            @endif
-                                        @endfor
-                                    </div>
-                                    <span class="product-rating-count">({{ $product->reviews }})</span>
-                                </div>
-                                <span class="product-stock-badge product-stock-{{ $product->stock }}">
-                                    {{ $product->stock === 'available' ? 'In Stock' : ($product->stock === 'low' ? 'Low Stock' : 'Out of Stock') }}
-                                </span>
-                            </div>
-                            
-                            <!-- Price and Action -->
-                            <div class="product-card-price-action">
-                                <div class="product-card-prices">
-                                    <span class="product-card-current-price">₹{{ number_format($product->price, 0) }}</span>
-                                    @if($product->old_price)
-                                    <span class="product-card-old-price">₹{{ number_format($product->old_price, 0) }}</span>
-                                    @endif
-                                </div>
-                                @if($product->stock !== 'out_of_stock')
-                                <button class="product-card-add-to-cart" onclick="addToCart({{ $product->id }})">
-                                    <i class="fas fa-shopping-cart"></i>
-                                    Add to Cart
-                                </button>
-                                @else
-                                <span class="product-out-of-stock">Out of Stock</span>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                    <!-- End Product Card Component -->
+                        @include('frontend.partials.product-card', ['product' => $product])
                     @endforeach
                 </div>
                 
@@ -835,8 +425,8 @@
                     </div>
                     <h3 class="text-lg font-medium text-gray-900 mb-2">No products found</h3>
                     <p class="text-gray-600">Try adjusting your filters to find what you're looking for.</p>
-                    <a href="{{ route('frontend.products.index') }}#products" class="hero-btn-unified">
-                        <i class="fas fa-shopping-bag mr-2"></i>
+                    <a href="{{ route('frontend.products.index') }}#products" class="hero-btn-unified inline-flex items-center gap-2 mt-4">
+                        <i class="fas fa-shopping-bag"></i>
                         Browse All Products
                     </a>
                 </div>
@@ -862,22 +452,55 @@
         </div>
     </section>
 
-    <!-- Include external CSS -->
+    <!-- Include external CSS and JS -->
     <link rel="stylesheet" href="{{ asset('frontend/css/products.css') }}">
-    
-    <!-- Include external JavaScript -->
     <script src="{{ asset('frontend/js/products.js') }}"></script>
     
-    <!-- SIMPLE FIX: Handle price filter form -->
+    <!-- Tab and Filter Scripts -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Handle price filter form submission
+            // Tab functionality
+            const tabs = document.querySelectorAll('.trending-tab');
+            const contents = document.querySelectorAll('.trending-tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Update active tab styling
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    contents.forEach(content => content.classList.add('hidden'));
+                    document.getElementById(`${tabId}-content`).classList.remove('hidden');
+                });
+            });
+            
+            // Horizontal scroll functionality
+            const scrollContainers = document.querySelectorAll('.trending-products-horizontal-scroll');
+            
+            scrollContainers.forEach(container => {
+                const leftBtn = container.parentElement?.querySelector('.scroll-left-btn');
+                const rightBtn = container.parentElement?.querySelector('.scroll-right-btn');
+                
+                if (leftBtn && rightBtn) {
+                    leftBtn.addEventListener('click', () => {
+                        container.scrollBy({ left: -320, behavior: 'smooth' });
+                    });
+                    
+                    rightBtn.addEventListener('click', () => {
+                        container.scrollBy({ left: 320, behavior: 'smooth' });
+                    });
+                }
+            });
+            
+            // Price filter form submission
             const priceForm = document.getElementById('priceFilterForm');
             if (priceForm) {
                 priceForm.addEventListener('submit', function(e) {
                     e.preventDefault();
                     
-                    // Get form data
                     const formData = new FormData(this);
                     const params = new URLSearchParams(formData);
                     let url = this.action;
@@ -886,30 +509,80 @@
                         url += '?' + params.toString();
                     }
                     
-                    // Add #products to URL
                     url += '#products';
-                    
-                    // Navigate to filtered URL
                     window.location.href = url;
                 });
             }
             
             // Handle pagination links
             document.addEventListener('click', function(e) {
-                if (e.target.closest('.page-btn')) {
-                    const pageLink = e.target.closest('.page-btn');
-                    if (pageLink.href && !pageLink.classList.contains('disabled') && !pageLink.classList.contains('active')) {
-                        e.preventDefault();
-                        
-                        let url = pageLink.href;
-                        if (!url.includes('#products')) {
-                            url += '#products';
-                        }
-                        
-                        window.location.href = url;
+                const pageLink = e.target.closest('.pagination a');
+                if (pageLink && !pageLink.classList.contains('disabled') && !pageLink.classList.contains('active')) {
+                    e.preventDefault();
+                    
+                    let url = pageLink.href;
+                    if (!url.includes('#products')) {
+                        url += '#products';
                     }
+                    
+                    window.location.href = url;
                 }
             });
         });
     </script>
+    
+    <style>
+        /* Filter Dropdown Styles */
+        .filter-dropdown-btn {
+            @apply px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium text-sm transition-colors flex items-center;
+        }
+        
+        .filter-dropdown-menu {
+            @apply absolute top-full left-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 min-w-[200px];
+        }
+        
+        .filter-dropdown-item {
+            @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex justify-between items-center;
+        }
+        
+        .filter-dropdown-item.active {
+            @apply bg-green-50 text-green-700;
+        }
+        
+        /* Scrollbar Hide */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Hero Buttons */
+        .hero-btn-unified {
+            @apply bg-gradient-to-r from-green-800 to-emerald-700 text-white px-6 py-3 rounded-lg font-semibold hover:from-green-900 hover:to-emerald-800 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg;
+        }
+        
+        .hero-btn-secondary {
+            @apply bg-white text-green-800 border-2 border-green-800 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-all duration-300;
+        }
+        
+        /* Pagination Styles */
+        .pagination {
+            @apply flex space-x-2;
+        }
+        
+        .pagination a, .pagination span {
+            @apply px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors;
+        }
+        
+        .pagination .active span {
+            @apply bg-green-600 text-white border-green-600;
+        }
+        
+        .pagination .disabled span {
+            @apply bg-gray-100 text-gray-400 cursor-not-allowed;
+        }
+    </style>
 </x-frontend-layout>

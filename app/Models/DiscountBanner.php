@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class OrderItemcls extends Model
+class DiscountBanner extends Model
 {
     //
 }

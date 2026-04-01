@@ -41,8 +41,6 @@ class Product extends Model
         'is_active' => 'boolean'
     ];
 
-    
-
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -53,7 +51,32 @@ class Product extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    // Keep all your existing methods below...
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function approvedReviews()
+    {
+        return $this->hasMany(Review::class)->where('is_approved', true);
+    }
+
+    public function getAverageRatingAttribute()
+    {
+        return $this->approvedReviews()->avg('rating') ?? 0;
+    }
+
+    public function getTotalReviewsAttribute()
+    {
+        return $this->approvedReviews()->count();
+    }
+
+    // Existing methods
     public function getFormattedPriceAttribute()
     {
         return '₹' . number_format($this->price, 0);
@@ -100,10 +123,5 @@ class Product extends Model
     public function getIsLowStockAttribute()
     {
         return $this->stock === 'low';
-    }
-
-    public function carts()
-    {
-        return $this->hasMany(Cart::class);
     }
 }
