@@ -1,0 +1,226 @@
+/* Custom dashboard background */
+.fi-main {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Or use a simple color */
+.fi-main {
+    background-color: #f0fdf4;
+}
+
+/* Dark mode */
+.dark .fi-main {
+    background-color: #0f172a;
+}
+
+
+
+/* resources/css/filament/admin.css */
+
+/* 3D Dashboard Container */
+.dashboard-3d-container {
+    perspective: 1000px;
+    padding: 20px;
+}
+
+/* 3D Tabs Container */
+.tabs-3d {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    perspective: 500px;
+}
+
+/* 3D Tab Buttons */
+.tab-3d {
+    position: relative;
+    padding: 12px 28px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #64748b;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transform-style: preserve-3d;
+    transform: translateZ(0) rotateX(0);
+    box-shadow: 0 5px 0 #94a3b8;
+}
+
+.tab-3d .tab-icon {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+}
+
+/* 3D Tab Hover Effect */
+.tab-3d:hover {
+    transform: translateY(-2px) translateZ(10px);
+    box-shadow: 0 7px 0 #94a3b8;
+    background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+}
+
+.tab-3d:hover .tab-icon {
+    transform: scale(1.1);
+}
+
+/* Active Tab 3D Effect */
+.tab-3d.active {
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+    color: white;
+    transform: translateY(-3px) translateZ(15px);
+    box-shadow: 0 8px 0 #3730a3;
+}
+
+.tab-3d.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+    border-radius: 12px;
+    pointer-events: none;
+}
+
+/* 3D Content Panel */
+.content-3d {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 24px;
+    padding: 24px;
+    transform-style: preserve-3d;
+    transform: translateZ(20px);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+        0 10px 20px rgba(0, 0, 0, 0.05);
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* 3D Stats Cards */
+.fi-wi-stats-overview .fi-stat {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 16px;
+    padding: 20px;
+    transform-style: preserve-3d;
+    transform: translateZ(10px);
+    transition: all 0.3s ease;
+    box-shadow: 
+        0 10px 20px rgba(0, 0, 0, 0.05),
+        0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+}
+
+.fi-wi-stats-overview .fi-stat:hover {
+    transform: translateY(-5px) translateZ(20px);
+    box-shadow: 
+        0 20px 30px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.9) inset;
+}
+
+/* 3D Chart Widgets */
+.fi-wi-chart {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 20px;
+    padding: 20px;
+    transform-style: preserve-3d;
+    transform: translateZ(10px);
+    transition: all 0.3s ease;
+    box-shadow: 
+        0 10px 20px rgba(0, 0, 0, 0.05),
+        0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+    margin-bottom: 20px;
+}
+
+.fi-wi-chart:hover {
+    transform: translateY(-3px) translateZ(15px);
+    box-shadow: 
+        0 15px 30px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.9) inset;
+}
+
+/* 3D Table Widgets */
+.fi-ta-widget {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 20px;
+    padding: 20px;
+    transform-style: preserve-3d;
+    transform: translateZ(10px);
+    transition: all 0.3s ease;
+    box-shadow: 
+        0 10px 20px rgba(0, 0, 0, 0.05),
+        0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+}
+
+.fi-ta-widget:hover {
+    transform: translateY(-3px) translateZ(15px);
+    box-shadow: 
+        0 15px 30px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.9) inset;
+}
+
+/* 3D Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) translateZ(0);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) translateZ(20px);
+    }
+}
+
+/* Dark mode support */
+.dark .content-3d {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.dark .fi-wi-stats-overview .fi-stat,
+.dark .fi-wi-chart,
+.dark .fi-ta-widget {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    box-shadow: 
+        0 10px 20px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+}
+
+.dark .tab-3d {
+    background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+    color: #94a3b8;
+    box-shadow: 0 5px 0 #0f172a;
+}
+
+.dark .tab-3d:hover {
+    background: linear-gradient(135deg, #475569 0%, #334155 100%);
+}
+
+.dark .tab-3d.active {
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+    color: white;
+    box-shadow: 0 8px 0 #3730a3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .tabs-3d {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .tab-3d {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+    
+    .content-3d {
+        padding: 16px;
+    }
+}
