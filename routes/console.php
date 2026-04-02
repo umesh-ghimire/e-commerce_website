@@ -23,3 +23,9 @@ Schedule::command('email:send-welcome-back')
     ->daily()
     ->withoutOverlapping()
     ->runInBackground();
+
+
+Schedule::command('email:inactive-welcome-back --days=30')->weekly();
+
+// Send to users inactive for 60 days with better discount (monthly)
+Schedule::command('email:inactive-welcome-back --days=60')->monthly();    

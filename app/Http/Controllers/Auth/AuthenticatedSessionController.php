@@ -28,6 +28,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // ✅ Update last login timestamp
+        $user = Auth::user();
+        $user->update(['last_login_at' => now()]);
+
        return redirect()->intended('/');
 
     }

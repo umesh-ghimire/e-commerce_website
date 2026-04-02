@@ -65,6 +65,7 @@ Route::get('/payment/qr/{order}/{wallet}', [App\Http\Controllers\Frontend\Checko
 Route::post('/payment/proof/{order}', [App\Http\Controllers\Frontend\CheckoutController::class, 'storePaymentProof'])
      ->name('frontend.payment.proof.store');     
 
+     
 // Dashboard
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -86,3 +87,18 @@ Route::get('auth/facebook', [FacebookController::class, 'redirectToFacebook'])->
 Route::get('auth/facebook/callback', [FacebookController::class, 'handleFacebookCallback']);
 
 require __DIR__.'/auth.php';
+
+
+use App\Mail\WelcomeBackMail;
+use App\Models\User;
+use Illuminate\Support\Facades\Mail;
+
+Route::get('/test-welcome-email', function () {
+    $user = User::first();
+    try {
+        Mail::to($user->email)->send(new WelcomeBackMail($user));
+        return "Welcome email sent successfully to: " . $user->email;
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+});

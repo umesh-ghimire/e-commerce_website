@@ -17,36 +17,34 @@ class CartController extends Controller
 
     // Add to Cart (AJAX)
     public function add(Request $request)
-    {
-        $request->validate([
-            'product_id' => 'required|integer|exists:products,id',
-            'quantity' => 'integer|min:1|max:10'
-        ]);
-
-        $product = Product::findOrFail($request->product_id);
-        $cart = session()->get('cart', []);
-
-        $id = $product->id;
-
-        if (isset($cart[$id])) {
-            $cart[$id]['quantity'] += $request->quantity ?? 1;
-        } else {
-            $cart[$id] = [
-                'name'      => $product->name,
-                'price'     => $product->price,
-                'image'     => $product->image,
-                'quantity'  => $request->quantity ?? 1,
-            ];
-        }
-
-        session()->put('cart', $cart);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Product added to cart successfully!',
-            'cartCount' => count($cart)
-        ]);
+{
+    $product = Product::find($request->product_id);
+    
+    if (!$product) {
+        return response()->json(['success' => false, 'message' => 'Product not found']);
     }
+    
+    $cart = session()->get('cart', []);
+    
+    if (isset($cart[$product->id])) {
+        $cart[$product->id]['quantity'] += $request->quantity ?? 1;
+    } else {
+        $cart[$product->id] = [
+            'name' => $product->name,
+            'price' => $product->price,
+            'image' => $product->image,  // Add this line
+            'quantity' => $request->quantity ?? 1,
+        ];
+    }
+    
+    session()->put('cart', $cart);
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Product added to cart',
+        'cart_count' => count($cart)
+    ]);
+}
 
     // Update Quantity (AJAX)
     public function update(Request $request)
