@@ -89,16 +89,3 @@ Route::get('auth/facebook/callback', [FacebookController::class, 'handleFacebook
 require __DIR__.'/auth.php';
 
 
-use App\Mail\WelcomeBackMail;
-use App\Models\User;
-use Illuminate\Support\Facades\Mail;
-
-Route::get('/test-welcome-email', function () {
-    $user = User::first();
-    try {
-        Mail::to($user->email)->send(new WelcomeBackMail($user));
-        return "Welcome email sent successfully to: " . $user->email;
-    } catch (\Exception $e) {
-        return "Error: " . $e->getMessage();
-    }
-});
