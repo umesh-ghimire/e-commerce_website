@@ -6,8 +6,6 @@ namespace App\Filament\Pages;
 use BackedEnum;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Support\Icons\Heroicon;
-use Filament\Contracts\Plugin;
-use Filament\Pages\Page;
 
 class Dashboard extends BaseDashboard
 {
@@ -16,9 +14,6 @@ class Dashboard extends BaseDashboard
     protected static ?string $navigationLabel = 'Dashboard';
     
     protected static ?int $navigationSort = 0;
-    
-    // Remove this line - DO NOT declare $view
-    // protected static string $view = 'filament.pages.dashboard';
     
     public $activeTab = 'overview';
     

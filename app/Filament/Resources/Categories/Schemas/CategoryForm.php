@@ -34,11 +34,13 @@ class CategoryForm
                 RichEditor::make('description')
                     ->columnSpanFull(),
                 FileUpload::make('image')
-                    ->image()
-                    ->directory('categories')
-                    ->imageResizeMode('cover')
-                    ->imageCropAspectRatio('16:9')
-                    ->maxSize(2048),
+    ->image()
+    ->directory('categories')  // This will save to storage/app/public/categories
+    ->visibility('public')     // Make sure it's public
+    ->imageResizeMode('cover')
+    ->imageCropAspectRatio('16:9')
+    ->maxSize(2048)
+    ->preserveFilenames(false),
                 TextInput::make('icon')
                     ->helperText('Enter FontAwesome or Heroicon class (e.g., heroicon-o-shopping-bag)')
                     ->placeholder('heroicon-o-tag'),

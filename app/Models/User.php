@@ -8,9 +8,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use App\Models\Address;
+use App\Models\Wishlist;
+use App\Models\Notification;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
+    use HasRoles;
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
@@ -22,6 +27,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
         'password',
         'google_id',
         'facebook_id',
@@ -31,6 +37,8 @@ class User extends Authenticatable
         'last_activity_at',
         'last_welcome_back_sent_at',
         'points',
+        'preferences', 
+        'deletion_requested_at', 
     ];
 
     /**
@@ -57,6 +65,8 @@ class User extends Authenticatable
             'last_welcome_back_sent_at' => 'datetime',
             'password' => 'hashed',
             'points' => 'integer',
+            'preferences' => 'array',
+            'deletion_requested_at' => 'datetime',
         ];
     }
 
@@ -132,6 +142,12 @@ class User extends Authenticatable
         return $this->points ?? 0;
     }
 
+    protected static function booted()
+{
+    static::created(function ($user) {
+        $user->assignRole('user');
+    });
+}
     /**
      * Add reward points to user.
      */
@@ -210,6 +226,38 @@ class User extends Authenticatable
     public function offers()
     {
         return $this->hasMany(\App\Models\Offer::class);
+    }
+
+    /**
+     * Get the addresses for the user.
+     */
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
+
+    /**
+     * Get the wishlist items for the user.
+     */
+    public function wishlist()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    /**
+     * Get the notifications for the user.
+     */
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    /**
+     * Get the user's default address.
+     */
+    public function getDefaultAddressAttribute()
+    {
+        return $this->addresses()->where('is_default', true)->first();
     }
 
     /**

@@ -21,47 +21,22 @@ class ProductsTable
     {
         return $table
             ->columns([
-                ImageColumn::make('image')
-                    ->square()
-                    ->size(50),
-                TextColumn::make('name')
-                    ->searchable()
-                    ->sortable()
-                    ->limit(30),
-                TextColumn::make('category.name')
-                    ->sortable()
-                    ->badge(),
-                TextColumn::make('brand')
-                    ->searchable(),
-                TextColumn::make('price')
-                    ->money('INR')
-                    ->sortable(),
-                TextColumn::make('old_price')
-                    ->money('INR')
-                    ->sortable(),
-                TextColumn::make('discount')
-                    ->suffix('%')
-                    ->color('success')
-                    ->sortable(),
-                SelectColumn::make('stock')
-                    ->options([
-                        'available' => 'Available',
-                        'low' => 'Low',
-                        'out_of_stock' => 'Out of Stock',
-                    ]),
-                IconColumn::make('is_best_seller')
-                    ->boolean(),
-                IconColumn::make('is_trending')
-                    ->boolean(),
-                IconColumn::make('is_active')
-                    ->boolean(),
-                // TextColumn::make('rating')
-                //     ->rating()
-                //     ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                ImageColumn::make('image')->square()->size(50),
+                TextColumn::make('name')->searchable()->sortable()->limit(30),
+                TextColumn::make('category.name')->sortable()->badge(),
+                TextColumn::make('brand')->searchable(),
+                TextColumn::make('price')->money('INR')->sortable(),
+                TextColumn::make('old_price')->money('INR')->sortable(),
+                TextColumn::make('discount')->suffix('%')->color('success')->sortable(),
+                SelectColumn::make('stock')->options([
+                    'available' => 'Available',
+                    'low' => 'Low',
+                    'out_of_stock' => 'Out of Stock',
+                ]),
+                IconColumn::make('is_best_seller')->boolean(),
+                IconColumn::make('is_trending')->boolean(),
+                IconColumn::make('is_active')->boolean(),
+                TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
@@ -69,22 +44,25 @@ class ProductsTable
                     ->label('Category')
                     ->relationship('category', 'name')
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->getOptionLabelFromRecordUsing(function ($record) {
+                        return $record->name ?? 'Unnamed Category #' . ($record->id ?? 'Unknown');
+                    }),
+
                 SelectFilter::make('brand')
-                    ->options(fn () => Product::distinct()->pluck('brand', 'brand')->toArray())
+                    ->options(fn () => Product::distinct()->pluck('brand', 'brand')->filter()->toArray())
                     ->searchable(),
+
                 SelectFilter::make('stock')
                     ->options([
                         'available' => 'Available',
                         'low' => 'Low Stock',
                         'out_of_stock' => 'Out of Stock',
                     ]),
-                TernaryFilter::make('is_best_seller')
-                    ->label('Best Seller'),
-                TernaryFilter::make('is_trending')
-                    ->label('Trending'),
-                TernaryFilter::make('is_active')
-                    ->label('Active'),
+
+                TernaryFilter::make('is_best_seller')->label('Best Seller'),
+                TernaryFilter::make('is_trending')->label('Trending'),
+                TernaryFilter::make('is_active')->label('Active'),
             ])
             ->recordActions([
                 EditAction::make(),

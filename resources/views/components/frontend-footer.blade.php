@@ -1,10 +1,16 @@
 @props([
     'footerSettings' => null,
     'footerLinks' => null,
-    'socialLinks' => null
+    'socialLinks' => null,
+    'featuredProducts' => []  // Added to accept featured products
 ])
 
 @php
+    // Ensure featuredProducts is a collection (prevents the error)
+    $featuredProducts = $featuredProducts instanceof \Illuminate\Support\Collection 
+        ? $featuredProducts 
+        : collect($featuredProducts);
+    
     // If data not passed, fetch it
     if (!$footerSettings) {
         $footerSettings = \App\Models\FooterSetting::first() ?? new \App\Models\FooterSetting();
@@ -24,6 +30,30 @@
 
 <footer class="w-full bg-green-900 mt-10 border-t border-green-800 pt-10">
     <div class="max-w-7xl mx-auto px-6">
+
+        {{-- Featured Products Section (Added to display in footer if needed) --}}
+        @if($featuredProducts->count() > 0)
+        <div class="mb-10 pb-8 border-b border-green-800">
+            <h3 class="font-semibold text-white text-lg mb-4">Featured Products</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                @foreach($featuredProducts->take(6) as $product)
+                <a href="{{ route('frontend.products.show', $product->slug) }}" class="group">
+                    <div class="bg-green-800 rounded-lg p-2 hover:bg-green-700 transition-all duration-300">
+                        <img src="{{ $product->image ? asset('storage/products/' . $product->image) : asset('images/products/default.jpg') }}" 
+                             alt="{{ $product->name }}"
+                             class="w-full h-24 object-cover rounded-md group-hover:scale-105 transition-transform duration-300">
+                        <p class="text-green-100 text-xs mt-2 text-center group-hover:text-yellow-400 truncate">
+                            {{ $product->name }}
+                        </p>
+                        <p class="text-yellow-400 text-xs text-center font-semibold">
+                            ₹{{ number_format($product->price, 0) }}
+                        </p>
+                    </div>
+                </a>
+                @endforeach
+            </div>
+        </div>
+        @endif
 
         <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-10">
 
@@ -71,14 +101,18 @@
                     </div>
                 @endif
 
-                {{-- Social Media Links (Optional) --}}
+                {{-- Social Media Links --}}
                 @if($socialLinks->count() > 0)
                 <div class="mt-6">
                     <div class="flex gap-3">
                         @foreach($socialLinks as $social)
                             <a href="{{ $social->url }}" target="_blank" class="w-8 h-8 rounded-full flex items-center justify-center transition hover:scale-110"
                                style="background-color: {{ $social->color ?? '#2d6a4f' }};">
-                                <i class="{{ $social->icon_class ?? 'fab fa-' . strtolower($social->platform) }} text-white text-sm"></i>
+                                @if($social->icon_class)
+                                    <i class="{{ $social->icon_class }} text-white text-sm"></i>
+                                @else
+                                    <span class="text-white text-sm">{{ substr($social->platform, 0, 1) }}</span>
+                                @endif
                             </a>
                         @endforeach
                     </div>
@@ -134,7 +168,7 @@
             </div>
             @endif
 
-            {{-- Newsletter Section (Optional) --}}
+            {{-- Newsletter Section --}}
             @if($footerSettings->show_newsletter && Route::has('newsletter.subscribe'))
             <div>
                 <h3 class="font-semibold text-white mb-3">{{ $footerSettings->newsletter_title ?? 'Newsletter' }}</h3>
@@ -196,7 +230,7 @@
 
             {{-- Copyright --}}
             <p class="text-green-200 mt-4 md:mt-0 text-sm">
-                {{ $footerSettings->copyright_text ?? 'All Rights Reserved by primehub PrimeHub Web | 2025' }}
+                {{ $footerSettings->copyright_text ?? 'All Rights Reserved by PrimeHub | 2025' }}
             </p>
 
         </div>

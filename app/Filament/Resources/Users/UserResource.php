@@ -42,6 +42,17 @@ class UserResource extends Resource
         ];
     }
 
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()
+            ->select(['id', 'name', 'email', 'avatar', 'email_verified_at', 'google_id', 'facebook_id', 'created_at']);
+    }
+
+    public static function canViewAny(): bool
+{
+    return auth()->user()?->can('view users') ?? false;
+}
+
     public static function getPages(): array
     {
         return [
